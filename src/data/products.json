@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "name": "사과",
+    "englishName": "Apple",
+    "price": 3000,
+    "description": "아삭하고 달콤한 국내산 사과입니다. 껍질째 먹을 수 있도록 친환경 농법으로 재배하였습니다.",
+    "origin": "경북 안동",
+    "weight": "500g",
+    "stock": 50,
+    "image": "/images/apple.jpg",
+    "category": "국내산"
+  },
+  {
+    "id": 2,
+    "name": "바나나",
+    "englishName": "Banana",
+    "price": 2500,
+    "description": "달콤하고 부드러운 필리핀산 바나나입니다. 에너지 보충에 좋으며 식이섬유가 풍부합니다.",
+    "origin": "필리핀",
+    "weight": "600g",
+    "stock": 80,
+    "image": "/images/banana.jpg",
+    "category": "수입산"
+  },
+  {
+    "id": 3,
+    "name": "딸기",
+    "englishName": "Strawberry",
+    "price": 8000,
+    "description": "향긋하고 새콤달콤한 논산 딸기입니다. 비타민 C가 풍부하여 면역력 향상에 도움을 줍니다.",
+    "origin": "충남 논산",
+    "weight": "500g",
+    "stock": 30,
+    "image": "/images/strawberry.jpg",
+    "category": "국내산"
+  },
+  {
+    "id": 4,
+    "name": "포도",
+    "englishName": "Grape",
+    "price": 12000,
+    "description": "껍질째 먹는 샤인머스캣 포도입니다. 당도가 높고 씨가 없어 먹기 편합니다.",
+    "origin": "경북 김천",
+    "weight": "800g",
+    "stock": 20,
+    "image": "/images/grape.jpg",
+    "category": "국내산"
+  },
+  {
+    "id": 5,
+    "name": "오렌지",
+    "englishName": "Orange",
+    "price": 5000,
+    "description": "즙이 많고 새콤달콤한 미국산 네이블 오렌지입니다. 비타민 C가 풍부합니다.",
+    "origin": "미국 캘리포니아",
+    "weight": "1kg",
+    "stock": 60,
+    "image": "/images/orange.jpg",
+    "category": "수입산"
+  },
+  {
+    "id": 6,
+    "name": "키위",
+    "englishName": "Kiwi",
+    "price": 4500,
+    "description": "새콤달콤한 뉴질랜드 골드키위입니다. 비타민 C와 식이섬유가 풍부합니다.",
+    "origin": "뉴질랜드",
+    "weight": "600g",
+    "stock": 45,
+    "image": "/images/kiwi.jpg",
+    "category": "수입산"
+  },
+  {
+    "id": 7,
+    "name": "망고",
+    "englishName": "Mango",
+    "price": 9000,
+    "description": "달콤한 향과 부드러운 과육이 특징인 태국산 망고입니다. 후숙 후 드시면 더욱 맛있습니다.",
+    "origin": "태국",
+    "weight": "700g",
+    "stock": 25,
+    "image": "/images/mango.jpg",
+    "category": "수입산"
+  },
+  {
+    "id": 8,
+    "name": "수박",
+    "englishName": "Watermelon",
+    "price": 18000,
+    "description": "시원하고 달콤한 국내산 수박입니다. 수분이 풍부하여 더운 여름철에 최고입니다.",
+    "origin": "충남 함안",
+    "weight": "5kg",
+    "stock": 15,
+    "image": "/images/watermelon.jpg",
+    "category": "국내산"
+  },
+  {
+    "id": 9,
+    "name": "복숭아",
+    "englishName": "Peach",
+    "price": 7000,
+    "description": "향긋하고 달콤한 국내산 백도 복숭아입니다. 과육이 부드럽고 즙이 풍부합니다.",
+    "origin": "충북 충주",
+    "weight": "600g",
+    "stock": 35,
+    "image": "/images/peach.jpg",
+    "category": "국내산"
+  },
+  {
+    "id": 10,
+    "name": "블루베리",
+    "englishName": "Blueberry",
+    "price": 6000,
+    "description": "항산화 성분이 풍부한 국내산 블루베리입니다. 눈 건강과 노화 방지에 효과적입니다.",
+    "origin": "전남 고흥",
+    "weight": "300g",
+    "stock": 40,
+    "image": "/images/blueberry.jpg",
+    "category": "국내산"
+  }
+]
