@@ -1,24 +1,28 @@
 import { Link, useLocation } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { selectCartTotalCount } from '../../store/cartSlice'
+import { selectIsLoggedIn, selectUser, logout } from '../../store/authSlice'
 
 function Header() {
+  const dispatch = useDispatch()
   const cartTotalCount = useSelector(selectCartTotalCount)
+  const isLoggedIn = useSelector(selectIsLoggedIn)
+  const user = useSelector(selectUser)
   const location = useLocation()
 
   const isActive = (path) => location.pathname === path
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-green-100 shadow-sm">
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-50 bg-white border-b border-border-line" style={{ boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)' }}>
+      <div className="max-w-6xl mx-auto px-10 h-16 flex items-center justify-between">
         {/* 로고 */}
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-            <span className="text-lg">🍏</span>
+        <Link to="/" className="flex items-center gap-2">
+          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
+            <span className="text-lg">🍊</span>
           </div>
           <div className="leading-tight">
-            <span className="block text-base font-bold text-green-700">과일가게</span>
-            <span className="block text-[10px] text-green-400 font-medium tracking-wide">FRESH FRUIT SHOP</span>
+            <span className="block text-base font-bold text-text-main font-ui">과일가게</span>
+            <span className="block text-[10px] text-text-muted font-medium tracking-wide font-ui">FRESH FRUIT SHOP</span>
           </div>
         </Link>
 
@@ -26,10 +30,10 @@ function Header() {
         <nav className="flex items-center gap-1">
           <Link
             to="/"
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-lg text-sm font-semibold font-ui transition-colors ${
               isActive('/')
-                ? 'bg-green-50 text-green-700'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                ? 'text-primary'
+                : 'text-text-sub hover:text-text-main'
             }`}
           >
             홈
@@ -37,10 +41,10 @@ function Header() {
 
           <Link
             to="/cart"
-            className={`relative flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`relative flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold font-ui transition-colors ${
               isActive('/cart')
-                ? 'bg-green-50 text-green-700'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                ? 'text-primary'
+                : 'text-text-sub hover:text-text-main'
             }`}
           >
             <svg
@@ -58,11 +62,34 @@ function Header() {
             </svg>
             장바구니
             {cartTotalCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+              <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold rounded-full min-w-4.5 h-4.5 flex items-center justify-center px-1">
                 {cartTotalCount}
               </span>
             )}
           </Link>
+
+          {/* 로그인/로그아웃 */}
+          {isLoggedIn ? (
+            <div className="flex items-center gap-2 ml-1 pl-3 border-l border-border-line">
+              <span className="text-xs text-text-muted font-body">
+                <span className="text-text-main font-semibold">{user.name}</span>님
+              </span>
+              <button
+                onClick={() => dispatch(logout())}
+                className="px-3 py-1.5 rounded-btn text-xs font-semibold font-ui text-text-sub border border-border-line hover:border-primary hover:text-primary transition-colors"
+              >
+                로그아웃
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="ml-1 px-4 py-1.5 rounded-btn text-sm font-semibold font-ui bg-primary text-white hover:opacity-90 transition-opacity"
+              style={{ boxShadow: '0px 4px 4px rgba(0,0,0,0.15)' }}
+            >
+              로그인
+            </Link>
+          )}
         </nav>
       </div>
     </header>
