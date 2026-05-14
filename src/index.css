@@ -1,4 +1,36 @@
+@import url("https://fonts.googleapis.com/css2?family=Amethysta&family=Nunito:ital,wght@0,200..900;1,200..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
+
 @import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-primary: #DF4128;
+  --color-text-main: #3A3A3A;
+  --color-text-sub: #616161;
+  --color-text-muted: #898989;
+  --color-text-disabled: #B0B0B0;
+  --color-border-line: #D8D8D8;
+  --color-bg-page: #FFFFFF;
+  --color-bg-input: #F4F5F7;
+  --color-bg-discount: #DD3E3E;
+  --color-bg-new: #0698B8;
+
+  /* Font Family */
+  --font-hero: 'Amethysta', serif;
+  --font-body: 'Roboto', sans-serif;
+  --font-price: 'Rubik', sans-serif;
+  --font-ui: 'Nunito', sans-serif;
+
+  /* Border Radius */
+  --radius-btn: 5px;
+  --radius-card: 18px;
+  --radius-input: 8px;
+
+  /* Box Shadow */
+  --shadow-btn: 0px 4px 4px rgba(0, 0, 0, 0.15);
+  --shadow-card: 0px 4px 17px rgba(0, 0, 0, 0.07);
+  --shadow-header: 0px 2px 8px rgba(0, 0, 0, 0.08);
+}
 
 @layer base {
   html {
@@ -6,11 +38,10 @@
   }
 
   body {
-    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', -apple-system,
-      BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #f7fdf4;
-    color: #1a1a1a;
+    background-color: #FFFFFF;
+    color: var(--color-text-main);
   }
 }

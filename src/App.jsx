@@ -1,17 +1,17 @@
-import { Outlet } from 'react-router-dom'
-import Header from './components/layout/Header'
-import Footer from './components/layout/Footer'
+import { Outlet } from 'react-router-dom';
+import Header from './components/layout/Header';
+import Footer from './components/layout/Footer';
 
 function App() {
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f7fdf4' }}>
+    <div className="min-h-screen flex flex-col bg-bg-page">
       <Header />
       <main className="flex-1">
         <Outlet />
       </main>
       <Footer />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
