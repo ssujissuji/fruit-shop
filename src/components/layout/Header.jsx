@@ -102,16 +102,16 @@ function Header() {
             )}
           </Link>
 
-          {/* admin 상품 등록 링크 */}
+          {/* admin 상품 관리 링크 */}
           {isAdmin && (
             <Link
-              to="/admin/product/new"
+              to="/admin/products"
               className={`px-4 py-2 rounded-lg text-sm font-semibold font-ui transition-colors ${
-                isActive('/admin/product/new')
+                location.pathname.startsWith('/admin')
                   ? 'text-primary'
                   : 'text-text-sub hover:text-text-main'
               }`}>
-              🛠 상품 등록
+              🛠 상품 관리
             </Link>
           )}
 

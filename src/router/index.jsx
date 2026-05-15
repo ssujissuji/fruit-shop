@@ -8,6 +8,8 @@ import Login from '../pages/Login'
 import Signup from '../pages/Signup'
 import Mypage from '../pages/Mypage'
 import AdminProductNew from '../pages/AdminProductNew'
+import AdminProductList from '../pages/AdminProductList'
+import AdminProductEdit from '../pages/AdminProductEdit'
 import PublicRoute from './PublicRoute'
 import PrivateRoute from './PrivateRoute'
 import AdminRoute from './AdminRoute'
@@ -23,6 +25,8 @@ const router = createBrowserRouter([
       { path: 'wishlist', element: <Wishlist /> },
       { path: 'mypage', element: <PrivateRoute><Mypage /></PrivateRoute> },
       { path: 'admin/product/new', element: <AdminRoute><AdminProductNew /></AdminRoute> },
+      { path: 'admin/products', element: <AdminRoute><AdminProductList /></AdminRoute> },
+      { path: 'admin/product/:id/edit', element: <AdminRoute><AdminProductEdit /></AdminRoute> },
     ],
   },
   {

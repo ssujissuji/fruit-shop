@@ -30,10 +30,21 @@ const productSlice = createSlice({
       state.items.push(newProduct)
       saveProductsToStorage(state.items)
     },
+    updateProduct(state, action) {
+      const index = state.items.findIndex((p) => p.id === action.payload.id)
+      if (index !== -1) {
+        state.items[index] = action.payload
+        saveProductsToStorage(state.items)
+      }
+    },
+    deleteProduct(state, action) {
+      state.items = state.items.filter((p) => p.id !== action.payload)
+      saveProductsToStorage(state.items)
+    },
   },
 })
 
-export const { addProduct } = productSlice.actions
+export const { addProduct, updateProduct, deleteProduct } = productSlice.actions
 
 export const selectProducts = (state) => state.products.items
 
