@@ -15,7 +15,6 @@ const CATEGORIES = [
 function Home() {
   const [activeCategory, setActiveCategory] = useState('전체');
   const [inputValue, setInputValue] = useState('');
-  const [isComposing, setIsComposing] = useState(false);
 
   const debouncedInput = useDebounce(inputValue, 300);
 
@@ -113,11 +112,7 @@ function Home() {
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onCompositionStart={() => setIsComposing(true)}
-              onCompositionEnd={(e) => {
-                setIsComposing(false);
-                setInputValue(e.target.value);
-              }}
+              onCompositionEnd={(e) => setInputValue(e.target.value)}
               placeholder="상품명으로 검색"
               className="w-full border border-gray-200 rounded-full px-4 py-2 pr-9 text-sm font-ui text-text-main placeholder:text-text-muted focus:outline-none focus:border-gray-400"
             />
