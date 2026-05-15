@@ -7,8 +7,10 @@ import Wishlist from '../pages/Wishlist'
 import Login from '../pages/Login'
 import Signup from '../pages/Signup'
 import Mypage from '../pages/Mypage'
+import AdminProductNew from '../pages/AdminProductNew'
 import PublicRoute from './PublicRoute'
 import PrivateRoute from './PrivateRoute'
+import AdminRoute from './AdminRoute'
 
 const router = createBrowserRouter([
   {
@@ -20,6 +22,7 @@ const router = createBrowserRouter([
       { path: 'cart', element: <Cart /> },
       { path: 'wishlist', element: <Wishlist /> },
       { path: 'mypage', element: <PrivateRoute><Mypage /></PrivateRoute> },
+      { path: 'admin/product/new', element: <AdminRoute><AdminProductNew /></AdminRoute> },
     ],
   },
   {

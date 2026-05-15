@@ -8,6 +8,13 @@
 
 ### Added
 
+- 관리자 상품 등록 페이지 (`/admin/product/new`) — admin 계정 전용, `AdminRoute`로 접근 제어
+- `productSlice` — 상품 전역 상태 관리 (`products.json` 초기 데이터 + localStorage 영속화), `addProduct` 액션
+- `AdminRoute` — `isAdmin` 플래그 기반 라우트 가드 (미로그인 → `/login`, 비admin → `/`)
+- admin 계정 추가 (`admin@fruit.com / admin1234`), `isAdmin` 필드, `selectIsAdmin` selector
+- Header에 admin 로그인 시 🛠 상품 등록 링크 표시
+- Login 페이지에 관리자 계정 힌트 추가
+- 상품 등록 폼: 이모지 드롭다운(16종), 중량 숫자 + g/kg 단위 드롭다운, react-hook-form + Zod 유효성 검사
 - 찜하기 기능 — 상품 카드/상세 페이지 하트 버튼, 찜 목록 페이지 (`/wishlist`), localStorage 영속화
 - `wishlistSlice` — 찜 상태 관리 (toggle / remove / clear), 비로그인 사용자도 사용 가능
 - Header 하트 아이콘 + 찜 수 뱃지 추가

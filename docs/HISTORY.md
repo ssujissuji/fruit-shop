@@ -149,6 +149,24 @@
 - **주요 변경 파일:** `docs/mypage-spec.md` (신규)
 - 화면 명세, 변경 파일 목록, 상태 관리, 라우팅, 구현 순서 정리
 
+### 관리자 상품 등록 기능 구현
+
+- **주요 변경 파일:** `src/store/authSlice.js`, `src/store/productSlice.js` (신규), `src/store/index.js`, `src/router/AdminRoute.jsx` (신규), `src/router/index.jsx`, `src/pages/AdminProductNew.jsx` (신규), `src/schemas/productSchema.js` (신규), `src/constants/emojis.js` (신규), `src/pages/Home.jsx`, `src/pages/ProductDetail.jsx`, `src/components/layout/Header.jsx`, `src/pages/Login.jsx`, `docs/PRD.md`, `docs/WORK.md`, `docs/admin-product-spec.md` (신규)
+- `authSlice` admin 계정 추가: `admin@fruit.com / admin1234`, `isAdmin` 플래그 방식으로 역할 구분, `selectIsAdmin` selector 추가
+- `productSlice` 신규 생성: `products.json` 초기 데이터 로드, `addProduct` 액션(id 자동 부여), localStorage 영속화 (`products` 키)
+- `Home.jsx` / `ProductDetail.jsx`: `products.json` 직접 import → `selectProducts` selector로 교체 (등록 상품 즉시 반영)
+- `AdminRoute.jsx` 신규: 미로그인 → `/login`, 비admin → `/` 리다이렉트
+- `/admin/product/new` 라우트 추가 (`AdminRoute`로 보호)
+- `productSchema.js` 신규: Zod 유효성 스키마 (9개 필드), 중량은 `weightValue`(number) + `weightUnit`(g/kg) 분리 후 submit 시 합산
+- `emojis.js` 신규: 과일 이모지 16종 상수
+- `AdminProductNew.jsx` 신규: 상품 등록 폼, 이모지 드롭다운, 중량 숫자+단위 드롭다운, react-hook-form + Zod 유효성 검사, 등록 후 홈 이동
+- `Header.jsx`: `isAdmin` 시 🛠 상품 등록 링크 표시
+- `Login.jsx`: 관리자 계정 힌트(`admin@fruit.com / admin1234`) 추가
+- `PRD.md` v1.3 업데이트: 화면 목록·기능 명세·라우팅·완료 조건·Redux Store 구조 반영
+- `admin-product-spec.md` 신규: 전체 명세 문서 작성
+
+---
+
 ### e2e 테스트 추가
 - **주요 변경 파일:** `e2e/login.spec.js` (신규), `e2e/signup.spec.js` (신규), `e2e/product-detail.spec.js`, `e2e/home.spec.js`
 - `login.spec.js` 신규: 유효성 에러, 인증 에러, 로그인 성공, 접근 제어, 링크 (9개)

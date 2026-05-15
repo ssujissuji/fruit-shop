@@ -150,12 +150,20 @@ function Login() {
                 </Link>
               </p>
               {/* 힌트 */}
-              <p className="text-xs text-center text-text-muted font-body">
-                연습용 계정&nbsp;&nbsp;|&nbsp;&nbsp;
-                <span className="text-text-sub font-semibold">test@fruit.com</span>
-                &nbsp;/&nbsp;
-                <span className="text-text-sub font-semibold">1234</span>
-              </p>
+              <div className="space-y-1.5">
+                <p className="text-xs text-center text-text-muted font-body">
+                  연습용 계정&nbsp;&nbsp;|&nbsp;&nbsp;
+                  <span className="text-text-sub font-semibold">test@fruit.com</span>
+                  &nbsp;/&nbsp;
+                  <span className="text-text-sub font-semibold">1234</span>
+                </p>
+                <p className="text-xs text-center text-text-muted font-body">
+                  관리자 계정&nbsp;&nbsp;|&nbsp;&nbsp;
+                  <span className="text-text-sub font-semibold">admin@fruit.com</span>
+                  &nbsp;/&nbsp;
+                  <span className="text-text-sub font-semibold">admin1234</span>
+                </p>
+              </div>
             </div>
           </div>
 

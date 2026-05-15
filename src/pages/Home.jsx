@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Slider from '../components/ui/Slider';
 import ProductCard from '../components/ui/ProductCard';
-import products from '../data/products.json';
+import { selectProducts } from '../store/productSlice';
 import useDebounce from '../hooks/useDebounce';
 import useProductFilter from '../hooks/useProductFilter';
 
@@ -23,6 +24,7 @@ function Home() {
     setFilterQuery(debouncedInput);
   }, [debouncedInput]);
 
+  const products = useSelector(selectProducts);
   const filtered = useProductFilter(products, activeCategory, filterQuery);
   const activeCategoryColor = CATEGORIES.find((c) => c.label === activeCategory)?.color;
 

@@ -1,9 +1,9 @@
 # PRD — 과일 쇼핑몰 (fruit-shop)
 
-**버전:** 1.2  
+**버전:** 1.3  
 **작성일:** 2026-05-13  
 **최종 수정일:** 2026-05-15  
-**상태:** 찜하기 기능 구현 완료
+**상태:** 관리자 상품 등록 기능 기획 확정
 
 ---
 
@@ -24,6 +24,7 @@
 - 마이페이지 (프로필 조회 + 이름 수정)
 - 상품 검색 (홈 화면 검색창, 카테고리 배지 연동)
 - 찜하기 (하트 버튼, 찜 목록 페이지, localStorage 영속화)
+- 관리자 상품 등록 (admin 계정 전용, 이모지 선택, localStorage 영속화)
 - (제외) 실제 결제, 주문 내역
 
 ---
@@ -39,6 +40,7 @@
 | 로그인 | `/login` | 이메일 + 비밀번호 로그인 |
 | 회원가입 | `/signup` | 이름 + 이메일 + 비밀번호 가입 |
 | 마이페이지 | `/mypage` | 프로필 조회 + 이름 수정 (로그인 필수) |
+| 관리자 상품 등록 | `/admin/product/new` | 상품 등록 폼 (admin 계정 전용) |
 
 ---
 
@@ -169,6 +171,37 @@
 
 ---
 
+### 3-7. 관리자 상품 등록 페이지 (`/admin/product/new`)
+
+- Header / Footer 포함 (기존 App 레이아웃)
+- `AdminRoute`로 보호: 미로그인 시 `/login`, 일반 계정 접근 시 `/` 리다이렉트
+
+#### 폼 필드
+
+| 필드 | 입력 방식 | 유효성 |
+|---|---|---|
+| 상품명 (한글) | text | 필수 |
+| 상품명 (영문) | text | 필수 |
+| 가격 | number | 필수, 1 이상 |
+| 설명 | textarea | 필수 |
+| 원산지 | text | 필수 |
+| 중량 | number + select (g / kg) | 필수, 0보다 커야 함 |
+| 재고 | number | 필수, 0 이상 |
+| 이모지 | select (드롭다운) | 필수, 미선택 시 🛒 기본값 |
+| 카테고리 | select | 국내산 / 수입산 |
+
+#### 이모지 선택지
+
+🍎 🍌 🍓 🍇 🍑 🍊 🍋 🍍 🥭 🍈 🍒 🫐 🥝 🍐 🍉 🛒(기본)
+
+#### 등록 후 동작
+
+- `productSlice`에 상품 추가 (id는 기존 최대 id + 1 자동 부여)
+- localStorage 동기화
+- 홈(`/`)으로 이동
+
+---
+
 ### 3-6. 회원가입 페이지 (`/signup`)
 
 - Header / Footer 없는 풀페이지 레이아웃 (로그인 페이지와 동일)
@@ -210,13 +243,13 @@
         id: 1,
         name: "사과",
         price: 3000,
-        image: "/images/apple.jpg",
+        image: "🍎",
         quantity: 2
       }
     ]
   },
   auth: {
-    user: { email: "test@fruit.com", name: "과일러버" } | null,
+    user: { email: "test@fruit.com", name: "과일러버", isAdmin: false } | null,
     isLoggedIn: false,
     error: null
   },
@@ -226,9 +259,12 @@
         id: 1,
         name: "사과",
         price: 3000,
-        image: "/images/apple.jpg"
+        image: "🍎"
       }
     ]
+  },
+  products: {
+    items: [ /* products.json 초기 데이터 + 관리자 등록 상품 */ ]
   }
 }
 ```
@@ -241,6 +277,12 @@
 | `removeFromCart(id)` | 상품 제거 |
 | `increaseQuantity(id)` | 수량 +1 |
 | `decreaseQuantity(id)` | 수량 -1 (1 미만 불가) |
+
+### productSlice 액션 목록
+
+| 액션 | 설명 |
+|---|---|
+| `addProduct(product)` | 상품 추가, id 자동 부여, localStorage 동기화 |
 
 ### wishlistSlice 액션 목록
 
@@ -259,6 +301,9 @@
 | `logout()` | 로그인 상태 초기화 |
 | `clearError()` | 인증 에러 초기화 |
 | `updateProfile({ name })` | 사용자 이름 변경 후 localStorage 동기화 |
+
+> admin 계정: `{ email: 'admin@fruit.com', password: 'admin1234', name: '관리자', isAdmin: true }`  
+> 일반 계정: `{ email: 'test@fruit.com', password: '1234', name: '과일러버', isAdmin: false }`
 
 ---
 
@@ -303,6 +348,10 @@
 /mypage        → Mypage.jsx    (PrivateRoute, App 레이아웃 포함)
 ```
 
+```
+/admin/product/new → AdminProductNew.jsx (AdminRoute, App 레이아웃 포함)
+```
+
 `createBrowserRouter` 방식 사용. 존재하지 않는 경로는 홈으로 리다이렉트.
 
 ---
@@ -340,6 +389,12 @@
 - [x] 빈 찜 목록 상태에서 안내 UI가 표시된다
 - [x] 새로고침 후에도 찜 목록이 유지된다 (localStorage 영속화)
 - [x] 비로그인 상태에서도 찜 기능이 동작한다
+- [ ] admin 계정으로 로그인 시 Header에 "상품 등록" 메뉴가 표시된다
+- [ ] 일반 계정으로 `/admin/product/new` 접근 시 홈으로 리다이렉트된다
+- [ ] 비로그인 상태로 `/admin/product/new` 접근 시 `/login`으로 리다이렉트된다
+- [ ] 상품 등록 폼에서 필수 항목 미입력 시 인라인 에러가 표시된다
+- [ ] 상품 등록 완료 후 홈으로 이동하고 등록한 상품이 목록에 표시된다
+- [ ] 새로고침 후에도 등록한 상품이 유지된다 (localStorage 영속화)
 
 ---
 

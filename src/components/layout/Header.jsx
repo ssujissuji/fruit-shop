@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectCartTotalCount } from '../../store/cartSlice';
-import { selectIsLoggedIn, selectUser, logout } from '../../store/authSlice';
+import { selectIsLoggedIn, selectUser, selectIsAdmin, logout } from '../../store/authSlice';
 import { selectWishlistCount } from '../../store/wishlistSlice';
 
 function Header() {
@@ -10,6 +10,7 @@ function Header() {
   const wishlistCount = useSelector(selectWishlistCount);
   const isLoggedIn = useSelector(selectIsLoggedIn);
   const user = useSelector(selectUser);
+  const isAdmin = useSelector(selectIsAdmin);
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
@@ -100,6 +101,19 @@ function Header() {
               </span>
             )}
           </Link>
+
+          {/* admin 상품 등록 링크 */}
+          {isAdmin && (
+            <Link
+              to="/admin/product/new"
+              className={`px-4 py-2 rounded-lg text-sm font-semibold font-ui transition-colors ${
+                isActive('/admin/product/new')
+                  ? 'text-primary'
+                  : 'text-text-sub hover:text-text-main'
+              }`}>
+              🛠 상품 등록
+            </Link>
+          )}
 
           {/* 로그인/로그아웃 */}
           {isLoggedIn ? (

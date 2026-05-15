@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const MOCK_USERS = [
-  { email: 'test@fruit.com', password: '1234', name: '과일러버' },
+  { email: 'test@fruit.com',  password: '1234',       name: '과일러버', isAdmin: false },
+  { email: 'admin@fruit.com', password: 'admin1234',  name: '관리자',   isAdmin: true  },
 ]
 
 const loadUserFromStorage = () => {
@@ -37,7 +38,7 @@ const authSlice = createSlice({
         (u) => u.email === email && u.password === password
       )
       if (found) {
-        const user = { email: found.email, name: found.name }
+        const user = { email: found.email, name: found.name, isAdmin: found.isAdmin }
         state.user = user
         state.isLoggedIn = true
         state.error = null
@@ -53,7 +54,7 @@ const authSlice = createSlice({
         state.error = '이미 가입된 이메일입니다.'
       } else {
         MOCK_USERS.push({ name, email, password })
-        const user = { email, name }
+        const user = { email, name, isAdmin: false }
         state.user = user
         state.isLoggedIn = true
         state.error = null
@@ -82,5 +83,6 @@ export const { login, signup, logout, updateProfile, clearError } = authSlice.ac
 export const selectIsLoggedIn = (state) => state.auth.isLoggedIn
 export const selectUser = (state) => state.auth.user
 export const selectAuthError = (state) => state.auth.error
+export const selectIsAdmin = (state) => state.auth.user?.isAdmin ?? false
 
 export default authSlice.reducer

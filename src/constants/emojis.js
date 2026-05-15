@@ -1,0 +1,18 @@
+export const FRUIT_EMOJIS = [
+  { emoji: '🍎', label: '사과' },
+  { emoji: '🍌', label: '바나나' },
+  { emoji: '🍓', label: '딸기' },
+  { emoji: '🍇', label: '포도' },
+  { emoji: '🍑', label: '복숭아' },
+  { emoji: '🍊', label: '귤/오렌지' },
+  { emoji: '🍋', label: '레몬' },
+  { emoji: '🍍', label: '파인애플' },
+  { emoji: '🥭', label: '망고' },
+  { emoji: '🍈', label: '멜론' },
+  { emoji: '🍒', label: '체리' },
+  { emoji: '🫐', label: '블루베리' },
+  { emoji: '🥝', label: '키위' },
+  { emoji: '🍐', label: '배' },
+  { emoji: '🍉', label: '수박' },
+  { emoji: '🛒', label: '기타(기본)' },
+]

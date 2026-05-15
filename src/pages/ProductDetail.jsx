@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { addToCart } from '../store/cartSlice'
 import { toggleWishlist, selectIsWishlisted } from '../store/wishlistSlice'
-import products from '../data/products.json'
+import { selectProducts } from '../store/productSlice'
 
 const FRUIT_CONFIG = {
   사과: { emoji: '🍎', gradient: 'from-red-100 to-rose-50', accent: '#ef4444' },
@@ -23,6 +23,7 @@ function ProductDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const products = useSelector(selectProducts)
 
   const product = products.find((p) => p.id === Number(id))
   const isWishlisted = useSelector(selectIsWishlisted(product?.id))
