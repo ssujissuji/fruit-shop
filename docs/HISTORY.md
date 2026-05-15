@@ -4,6 +4,36 @@
 
 ---
 
+## 2026-05-15
+
+### 찜하기 기능 구현
+- **주요 변경 파일:** `src/store/wishlistSlice.js` (신규), `src/pages/Wishlist.jsx` (신규), `src/store/index.js`, `src/router/index.jsx`, `src/components/layout/Header.jsx`, `src/components/ui/ProductCard.jsx`, `src/pages/ProductDetail.jsx`
+- `wishlistSlice.js` 신규 생성: `toggleWishlist` / `removeFromWishlist` / `clearWishlist` 액션, localStorage 영속화, 선택자 3개 (`selectWishlistItems`, `selectIsWishlisted`, `selectWishlistCount`)
+- `store/index.js`에 `wishlistReducer` 등록
+- `router/index.jsx`에 `/wishlist` 라우트 추가
+- `Header.jsx`에 하트 아이콘 + 찜 수 뱃지 추가 (`/wishlist` 이동)
+- `ProductCard.jsx`에 카드 우상단 하트 버튼 추가 (찜 상태 시각화: 채워진 빨강 / 외곽선 회색)
+- `ProductDetail.jsx`에 구매 버튼 영역 왼쪽에 하트 버튼 추가
+- `Wishlist.jsx` 신규 구현: 찜 목록 그리드, 개별 삭제, 전체 삭제, 장바구니 담기, 빈 상태 안내 UI
+- 비로그인 사용자도 사용 가능, 새로고침 후에도 localStorage로 찜 목록 유지
+- 기획서 `docs/wishlist-spec.md` 작성
+
+---
+
+### 상품 검색 기능 구현
+- **주요 변경 파일:** `src/hooks/useDebounce.js` (신규), `src/hooks/useProductFilter.js` (신규), `src/pages/Home.jsx`, `e2e/search.spec.js` (신규)
+- `useDebounce` 훅: 범용 디바운스 훅, 300ms 지연 후 값 반영
+- `useProductFilter` 훅: 카테고리 + 검색어 AND 필터, `useMemo`로 재계산 최소화
+- `Home.jsx` 상태 구조 변경: `inputValue`(입력창 바인딩) / `filterQuery`(실제 필터 기준) / `isComposing`(IME 플래그) 분리
+- 한글 IME 조합 이슈 처리: `onCompositionStart` / `onCompositionEnd`로 마지막 글자 중복 방지
+- Enter 키 즉시 실행: 디바운스 우회해 `filterQuery` 직접 갱신, 조합 중 Enter는 무시
+- X 버튼으로 `inputValue` + `filterQuery` 동시 초기화
+- 빈 결과 시 "검색 결과가 없습니다." 안내 문구 표시
+- 카테고리 배지 UI 추가: 카테고리 선택 시 검색창 왼쪽에 카테고리 색상 배지 표시, 배지 클릭으로 카테고리 전체 초기화
+- e2e 테스트 17개 추가 (`e2e/search.spec.js`): 한글/영문 검색, 대소문자, 빈 결과, X 버튼, Enter 즉시 실행, 카테고리+검색어 AND 조건, 카테고리 배지(3개)
+
+---
+
 ## 2026-05-13
 
 ### 프로젝트 초기 세팅

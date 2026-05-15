@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { addToCart } from '../../store/cartSlice'
+import { toggleWishlist, selectIsWishlisted } from '../../store/wishlistSlice'
 
 const FRUIT_CONFIG = {
   사과:    { emoji: '🍎' },
@@ -25,11 +26,17 @@ const CATEGORY_COLOR = {
 
 function ProductCard({ product }) {
   const dispatch = useDispatch()
+  const isWishlisted = useSelector(selectIsWishlisted(product.id))
   const config = FRUIT_CONFIG[product.name] ?? DEFAULT_CONFIG
 
   const handleAddToCart = (e) => {
     e.preventDefault()
     dispatch(addToCart({ product }))
+  }
+
+  const handleToggleWishlist = (e) => {
+    e.preventDefault()
+    dispatch(toggleWishlist(product))
   }
 
   return (
@@ -60,6 +67,28 @@ function ProductCard({ product }) {
           >
             {product.category}
           </span>
+
+          {/* 찜 버튼 */}
+          <button
+            onClick={handleToggleWishlist}
+            aria-label={isWishlisted ? '찜 해제' : '찜하기'}
+            className="absolute top-2.5 right-2.5 w-7 h-7 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-colors"
+            style={{ boxShadow: '0px 2px 6px rgba(0,0,0,0.12)' }}
+          >
+            <svg
+              className="w-4 h-4 transition-colors"
+              fill={isWishlisted ? '#ef4444' : 'none'}
+              stroke={isWishlisted ? '#ef4444' : '#9ca3af'}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
+            </svg>
+          </button>
         </div>
 
         {/* 정보 영역 */}

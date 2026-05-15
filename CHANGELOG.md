@@ -8,6 +8,12 @@
 
 ### Added
 
+- 찜하기 기능 — 상품 카드/상세 페이지 하트 버튼, 찜 목록 페이지 (`/wishlist`), localStorage 영속화
+- `wishlistSlice` — 찜 상태 관리 (toggle / remove / clear), 비로그인 사용자도 사용 가능
+- Header 하트 아이콘 + 찜 수 뱃지 추가
+- 상품 검색 — 홈 화면 상품명(한글/영문) 실시간 필터링, 카테고리 필터와 AND 조건 적용
+- `useDebounce` 훅 — 범용 디바운스 훅 (300ms)
+- `useProductFilter` 훅 — 카테고리 + 검색어 복합 필터 (useMemo)
 - 마이페이지 (`/mypage`) — 프로필 카드(이니셜 아바타, 이름, 이메일), 이름 수정, 로그아웃
 - `PrivateRoute` — 비로그인 시 `/login`으로 리다이렉트
 - `authSlice.updateProfile` — 이름 변경 후 Redux 상태 + localStorage 동기화

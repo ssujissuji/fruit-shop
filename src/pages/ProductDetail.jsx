@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { addToCart } from '../store/cartSlice'
+import { toggleWishlist, selectIsWishlisted } from '../store/wishlistSlice'
 import products from '../data/products.json'
 
 const FRUIT_CONFIG = {
@@ -24,6 +25,7 @@ function ProductDetail() {
   const dispatch = useDispatch()
 
   const product = products.find((p) => p.id === Number(id))
+  const isWishlisted = useSelector(selectIsWishlisted(product?.id))
 
   if (!product) {
     return (
@@ -55,6 +57,10 @@ function ProductDetail() {
   const handleBuyNow = () => {
     dispatch(addToCart({ product, quantity }))
     navigate('/cart')
+  }
+
+  const handleToggleWishlist = () => {
+    dispatch(toggleWishlist(product))
   }
 
   return (
@@ -155,6 +161,29 @@ function ProductDetail() {
 
           {/* 구매 버튼 */}
           <div className="flex gap-3 mt-4">
+            <button
+              onClick={handleToggleWishlist}
+              aria-label={isWishlisted ? '찜 해제' : '찜하기'}
+              className="w-12 flex items-center justify-center border-2 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] flex-shrink-0"
+              style={{
+                borderColor: isWishlisted ? '#ef4444' : '#d1d5db',
+                color: isWishlisted ? '#ef4444' : '#9ca3af',
+              }}
+            >
+              <svg
+                className="w-5 h-5"
+                fill={isWishlisted ? 'currentColor' : 'none'}
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>
+            </button>
             <button
               onClick={handleAddToCart}
               className="flex-1 border-2 font-bold py-3.5 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] text-sm"
