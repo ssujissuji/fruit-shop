@@ -76,3 +76,41 @@
 - **주요 변경 파일:** `docs/login-page-spec.md`, `docs/signup-page-spec.md`
 - 로그인 페이지 기획서 작성: 레이아웃 구조, 상태, 이벤트 흐름, 유효성 검사 규칙, 디자인 토큰, 라우팅
 - 회원가입 페이지 기획서 작성: 로그인 기획서 구조 기반, 고유 항목(필드 목록, 확장된 유효성 검사, 로그인 페이지와의 차이점) 추가
+
+---
+
+## 2026-05-15
+
+### 문서 인프라 초기 작성
+- **주요 변경 파일:** `docs/WORK.md`, `docs/HISTORY.md`, `docs/prd.md`
+- `WORK.md` 신규 생성: 현재 작업 현황, 결정 사항, v2 고려 사항 관리
+- `HISTORY.md` 신규 생성: git 이력 기반으로 완료 작업 소급 정리
+- `prd.md` 완료 조건 체크박스 전체 업데이트 (PRD 검증 결과 반영)
+
+### PRD 검증 및 미구현 항목 수정
+- **주요 변경 파일:** `src/pages/ProductDetail.jsx`, `src/pages/Login.jsx`, `src/pages/Signup.jsx`, `src/store/cartSlice.js`, `src/components/ui/ProductCard.jsx`
+- PRD 완료 조건 14개 전수 검증 → 3개 미구현 항목 발견 및 수정
+- `ProductDetail.jsx` 수량 선택 UI 추가: `-`/`+` 버튼, 최소 1 / 최대 재고 수량 제한
+- `cartSlice.addToCart` payload를 `{ product, quantity }` 구조로 변경, `ProductCard` 호출부 통일
+- `Login.jsx` / `Signup.jsx` 로그인 성공 후 홈 이동 추가 (`useEffect` + `selectIsLoggedIn` → `navigate('/')`)
+
+### Login / Signup 폼 react-hook-form + Zod 리팩토링
+- **주요 변경 파일:** `src/pages/Login.jsx`, `src/pages/Signup.jsx`, `src/schemas/authSchemas.js` (신규)
+- `useState(form/touched)` 및 수동 유효성 로직 전면 제거
+- `useForm` + `zodResolver` 기반으로 교체
+- `src/schemas/authSchemas.js` 생성: `loginSchema`, `signupSchema` 분리 관리
+- `watch()` 대신 `registerField()` 헬퍼로 onChange 래핑 (React Compiler 경고 해소)
+
+### 기획서 react-hook-form + Zod 내용 반영
+- **주요 변경 파일:** `docs/login-page-spec.md`, `docs/signup-page-spec.md`
+- 상태 섹션: `useState` → `useForm` + Zod 스키마로 업데이트
+- 이벤트 흐름·유효성 검사 섹션: 라이브러리 기반 방식으로 재작성
+- 사용 라이브러리 섹션 추가
+
+### e2e 테스트 추가
+- **주요 변경 파일:** `e2e/login.spec.js` (신규), `e2e/signup.spec.js` (신규), `e2e/product-detail.spec.js`, `e2e/home.spec.js`
+- `login.spec.js` 신규: 유효성 에러, 인증 에러, 로그인 성공, 접근 제어, 링크 (9개)
+- `signup.spec.js` 신규: 유효성 에러, 중복 이메일, 가입 성공, 접근 제어, 링크 (11개)
+- `product-detail.spec.js` 수량 관련 4개 추가: 초기값, +/- 버튼 동작, 2개 담기
+- `home.spec.js` 섹션 타이틀 수정 반영
+- 총 테스트 26개 → 50개

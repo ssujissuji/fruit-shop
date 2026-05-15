@@ -7,13 +7,7 @@
 
 ## 진행 중
 
-- 미커밋 변경사항 정리 및 커밋
-  - `CLAUDE.md` 수정
-  - `docs/design.md` 수정
-  - `docs/CHANGELOG.md` 삭제 → 루트 `CHANGELOG.md`로 이동
-  - `src/components/ui/ProductCard.jsx` 수정
-  - `src/pages/Home.jsx` 수정
-  - `docs/HISTORY.md`, `docs/WORK.md` 신규 추가 (현재 작업)
+없음
 
 ---
 
@@ -33,6 +27,9 @@
 | 2026-05-14 | Gilroy 폰트 → Nunito 대체 | Google Fonts 미제공으로 가장 유사한 폰트로 대체 |
 | 2026-05-14 | 카테고리 배지 색상 인라인 스타일 적용 | 동적 색상이라 Tailwind 유틸리티로 표현 불가 |
 | 2026-05-14 | `CHANGELOG.md`를 `docs/` 밖 루트로 이동 | 릴리즈 이력 파일은 프로젝트 루트에 두는 것이 관례 |
+| 2026-05-15 | react-hook-form + Zod 도입 | 수동 폼 상태 관리 대비 유효성 로직 선언적 관리, 코드량 감소 |
+| 2026-05-15 | Zod 스키마를 `src/schemas/`로 분리 | 페이지와 관심사 분리, 향후 스키마 재사용 대비 |
+| 2026-05-15 | `watch()` 대신 `registerField()` 헬퍼 사용 | React Compiler의 `watch()` 메모이제이션 경고 해소 |
 
 ---
 
