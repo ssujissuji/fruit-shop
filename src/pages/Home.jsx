@@ -1,17 +1,21 @@
-import { useState } from 'react'
-import Slider from '../components/ui/Slider'
-import ProductCard from '../components/ui/ProductCard'
-import products from '../data/products.json'
+import { useState } from 'react';
+import Slider from '../components/ui/Slider';
+import ProductCard from '../components/ui/ProductCard';
+import products from '../data/products.json';
 
-const CATEGORIES = ['전체', '국내산', '수입산']
+const CATEGORIES = [
+  { label: '전체', color: '#DF4128' },
+  { label: '국내산', color: '#059669' },
+  { label: '수입산', color: '#7C5CBF' },
+];
 
 function Home() {
-  const [activeCategory, setActiveCategory] = useState('전체')
+  const [activeCategory, setActiveCategory] = useState('전체');
 
   const filtered =
     activeCategory === '전체'
       ? products
-      : products.filter((p) => p.category === activeCategory)
+      : products.filter((p) => p.category === activeCategory);
 
   return (
     <div className="max-w-6xl mx-auto px-10 py-10">
@@ -31,12 +35,15 @@ function Home() {
           <div
             key={item.title}
             className="flex items-center gap-3 bg-white rounded px-5 py-5"
-            style={{ boxShadow: '0px 4px 17px rgba(0, 0, 0, 0.07)' }}
-          >
+            style={{ boxShadow: '0px 4px 17px rgba(0, 0, 0, 0.07)' }}>
             <span className="text-2xl">{item.icon}</span>
             <div>
-              <p className="text-sm font-semibold font-ui text-text-main">{item.title}</p>
-              <p className="text-xs font-ui text-text-muted mt-0.5">{item.desc}</p>
+              <p className="text-sm font-semibold font-ui text-text-main">
+                {item.title}
+              </p>
+              <p className="text-xs font-ui text-text-muted mt-0.5">
+                {item.desc}
+              </p>
             </div>
           </div>
         ))}
@@ -48,28 +55,36 @@ function Home() {
           <div>
             <h2
               className="text-text-main font-body"
-              style={{ fontSize: '30px', fontWeight: 500 }}
-            >
+              style={{ fontSize: '30px', fontWeight: 500 }}>
               추천 상품
             </h2>
-            <p className="text-sm text-text-muted font-body mt-1">신선한 과일 {filtered.length}종</p>
+            <p className="text-sm text-text-muted font-body mt-1">
+              신선한 과일 {filtered.length}종
+            </p>
           </div>
 
           {/* 카테고리 필터 */}
           <div className="flex gap-2">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-1.5 rounded-full text-sm font-semibold font-ui transition-all ${
-                  activeCategory === cat
-                    ? 'bg-primary text-white'
-                    : 'bg-white text-text-sub hover:text-primary border border-border-line'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+            {CATEGORIES.map(({ label, color }) => {
+              const isActive = activeCategory === label;
+              return (
+                <button
+                  key={label}
+                  onClick={() => setActiveCategory(label)}
+                  className="px-4 py-1.5 rounded-full text-sm font-semibold font-ui transition-all border"
+                  style={
+                    isActive
+                      ? {
+                          backgroundColor: color,
+                          color: '#fff',
+                          borderColor: color,
+                        }
+                      : { backgroundColor: '#fff', color, borderColor: color }
+                  }>
+                  {label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -80,7 +95,7 @@ function Home() {
         </div>
       </section>
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;
