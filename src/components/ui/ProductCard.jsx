@@ -17,13 +17,19 @@ const FRUIT_CONFIG = {
 
 const DEFAULT_CONFIG = { emoji: '🍑' }
 
+const CATEGORY_COLOR = {
+  '전체':  '#DF4128',
+  '국내산': '#059669',
+  '수입산': '#7C5CBF',
+}
+
 function ProductCard({ product }) {
   const dispatch = useDispatch()
   const config = FRUIT_CONFIG[product.name] ?? DEFAULT_CONFIG
 
   const handleAddToCart = (e) => {
     e.preventDefault()
-    dispatch(addToCart(product))
+    dispatch(addToCart({ product }))
   }
 
   return (
@@ -48,7 +54,10 @@ function ProductCard({ product }) {
           </div>
 
           {/* 카테고리 뱃지 */}
-          <span className="absolute top-3 left-3 bg-primary text-white text-[10px] font-bold font-ui px-2 py-0.5 rounded-full">
+          <span
+            className="absolute top-3 left-3 text-white text-[10px] font-bold font-ui px-2 py-0.5 rounded-full"
+            style={{ backgroundColor: CATEGORY_COLOR[product.category] ?? CATEGORY_COLOR['전체'] }}
+          >
             {product.category}
           </span>
         </div>

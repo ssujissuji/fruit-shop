@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { addToCart } from '../store/cartSlice'
@@ -41,13 +42,18 @@ function ProductDetail() {
 
   const config = FRUIT_CONFIG[product.name] ?? DEFAULT_CONFIG
 
+  const [quantity, setQuantity] = useState(1)
+
+  const handleDecrease = () => setQuantity((q) => Math.max(1, q - 1))
+  const handleIncrease = () => setQuantity((q) => Math.min(product.stock, q + 1))
+
   const handleAddToCart = () => {
-    dispatch(addToCart(product))
+    dispatch(addToCart({ product, quantity }))
     alert(`${product.name}이(가) 장바구니에 담겼습니다.`)
   }
 
   const handleBuyNow = () => {
-    dispatch(addToCart(product))
+    dispatch(addToCart({ product, quantity }))
     navigate('/cart')
   }
 
@@ -124,8 +130,31 @@ function ProductDetail() {
             <p className="text-gray-600 text-sm leading-relaxed">{product.description}</p>
           </div>
 
+          {/* 수량 선택 */}
+          <div className="flex items-center gap-4 mt-8">
+            <span className="text-sm font-semibold text-gray-500">수량</span>
+            <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden">
+              <button
+                onClick={handleDecrease}
+                disabled={quantity <= 1}
+                className="w-10 h-10 flex items-center justify-center text-lg font-bold text-gray-500 hover:bg-gray-100 disabled:opacity-30 transition-colors"
+              >
+                −
+              </button>
+              <span className="w-10 text-center text-sm font-bold text-gray-800">{quantity}</span>
+              <button
+                onClick={handleIncrease}
+                disabled={quantity >= product.stock}
+                className="w-10 h-10 flex items-center justify-center text-lg font-bold text-gray-500 hover:bg-gray-100 disabled:opacity-30 transition-colors"
+              >
+                +
+              </button>
+            </div>
+            <span className="text-xs text-gray-400">재고 {product.stock}개</span>
+          </div>
+
           {/* 구매 버튼 */}
-          <div className="flex gap-3 mt-8">
+          <div className="flex gap-3 mt-4">
             <button
               onClick={handleAddToCart}
               className="flex-1 border-2 font-bold py-3.5 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] text-sm"
