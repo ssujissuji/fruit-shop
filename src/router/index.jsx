@@ -5,7 +5,9 @@ import ProductDetail from '../pages/ProductDetail'
 import Cart from '../pages/Cart'
 import Login from '../pages/Login'
 import Signup from '../pages/Signup'
+import Mypage from '../pages/Mypage'
 import PublicRoute from './PublicRoute'
+import PrivateRoute from './PrivateRoute'
 
 const router = createBrowserRouter([
   {
@@ -15,6 +17,7 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: 'product/:id', element: <ProductDetail /> },
       { path: 'cart', element: <Cart /> },
+      { path: 'mypage', element: <PrivateRoute><Mypage /></PrivateRoute> },
     ],
   },
   {

@@ -8,6 +8,9 @@
 
 ### Added
 
+- 마이페이지 (`/mypage`) — 프로필 카드(이니셜 아바타, 이름, 이메일), 이름 수정, 로그아웃
+- `PrivateRoute` — 비로그인 시 `/login`으로 리다이렉트
+- `authSlice.updateProfile` — 이름 변경 후 Redux 상태 + localStorage 동기화
 - `src/schemas/authSchemas.js` — Zod 스키마 파일 분리 (`loginSchema`, `signupSchema`)
 - 상품 상세 페이지 수량 선택 UI — `-`/`+` 버튼, 최소 1 / 최대 재고 수량 제한
 - 로그인·회원가입 성공 후 홈(`/`) 자동 이동
@@ -15,6 +18,7 @@
 
 ### Changed
 
+- Header 사용자 이름을 마이페이지(`/mypage`) 링크로 변경
 - Login·Signup 폼을 react-hook-form + Zod 기반으로 리팩토링
   - `useState(form/touched)` 및 수동 유효성 로직 제거
   - `registerField()` 헬퍼로 onChange 래핑 (React Compiler 경고 해소)

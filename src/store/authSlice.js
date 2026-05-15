@@ -66,13 +66,18 @@ const authSlice = createSlice({
       state.error = null
       removeUserFromStorage()
     },
+    updateProfile(state, action) {
+      const { name } = action.payload
+      state.user = { ...state.user, name }
+      saveUserToStorage(state.user)
+    },
     clearError(state) {
       state.error = null
     },
   },
 })
 
-export const { login, signup, logout, clearError } = authSlice.actions
+export const { login, signup, logout, updateProfile, clearError } = authSlice.actions
 
 export const selectIsLoggedIn = (state) => state.auth.isLoggedIn
 export const selectUser = (state) => state.auth.user

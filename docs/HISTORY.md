@@ -107,6 +107,18 @@
 - 이벤트 흐름·유효성 검사 섹션: 라이브러리 기반 방식으로 재작성
 - 사용 라이브러리 섹션 추가
 
+### 마이페이지 구현
+- **주요 변경 파일:** `src/pages/Mypage.jsx` (신규), `src/router/PrivateRoute.jsx` (신규), `src/store/authSlice.js`, `src/router/index.jsx`, `src/components/layout/Header.jsx`
+- `PrivateRoute.jsx` 추가: 비로그인 시 `/login`으로 리다이렉트
+- `authSlice`에 `updateProfile` 액션 추가: 이름 변경 후 Redux 상태 + localStorage 동기화
+- `Mypage.jsx` 구현: 프로필 카드(이니셜 아바타, 이름, 이메일), 이름 수정 폼(react-hook-form + Zod), 로그아웃 버튼
+- `/mypage` 라우트 추가 (`PrivateRoute`로 보호)
+- Header 사용자 이름을 `/mypage` 링크로 변경
+
+### 마이페이지 기획서 작성
+- **주요 변경 파일:** `docs/mypage-spec.md` (신규)
+- 화면 명세, 변경 파일 목록, 상태 관리, 라우팅, 구현 순서 정리
+
 ### e2e 테스트 추가
 - **주요 변경 파일:** `e2e/login.spec.js` (신규), `e2e/signup.spec.js` (신규), `e2e/product-detail.spec.js`, `e2e/home.spec.js`
 - `login.spec.js` 신규: 유효성 에러, 인증 에러, 로그인 성공, 접근 제어, 링크 (9개)
