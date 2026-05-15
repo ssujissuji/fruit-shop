@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import Slider from '../components/ui/Slider';
 import ProductCard from '../components/ui/ProductCard';
@@ -15,18 +15,15 @@ const CATEGORIES = [
 function Home() {
   const [activeCategory, setActiveCategory] = useState('전체');
   const [inputValue, setInputValue] = useState('');
-  const [filterQuery, setFilterQuery] = useState('');
   const [isComposing, setIsComposing] = useState(false);
 
   const debouncedInput = useDebounce(inputValue, 300);
 
-  useEffect(() => {
-    setFilterQuery(debouncedInput);
-  }, [debouncedInput]);
-
   const products = useSelector(selectProducts);
-  const filtered = useProductFilter(products, activeCategory, filterQuery);
-  const activeCategoryColor = CATEGORIES.find((c) => c.label === activeCategory)?.color;
+  const filtered = useProductFilter(products, activeCategory, debouncedInput);
+  const activeCategoryColor = CATEGORIES.find(
+    (c) => c.label === activeCategory,
+  )?.color;
 
   return (
     <div className="max-w-6xl mx-auto px-10 py-10">
@@ -121,20 +118,12 @@ function Home() {
                 setIsComposing(false);
                 setInputValue(e.target.value);
               }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !isComposing) {
-                  setFilterQuery(inputValue);
-                }
-              }}
               placeholder="상품명으로 검색"
               className="w-full border border-gray-200 rounded-full px-4 py-2 pr-9 text-sm font-ui text-text-main placeholder:text-text-muted focus:outline-none focus:border-gray-400"
             />
             {inputValue && (
               <button
-                onClick={() => {
-                  setInputValue('');
-                  setFilterQuery('');
-                }}
+                onClick={() => setInputValue('')}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs"
                 aria-label="검색어 초기화">
                 ✕

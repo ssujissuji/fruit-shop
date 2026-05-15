@@ -176,69 +176,41 @@ export default useProductFilter;
 
 ### 3-5. Enter 키 즉시 실행 처리
 
-#### 문제
+> **[2026-05-15 변경]** 초기 구현에서 `filterQuery` 상태 + `useEffect`로 Enter 즉시 실행을 지원했으나,
+> 이 패턴이 이중 렌더링을 유발하는 anti-pattern임이 확인되어 제거하였다.
+> 현재 구현은 `debouncedInput`을 직접 사용하는 방식으로 단순화되어 있다.
 
-디바운스를 적용하면 입력 후 300ms를 기다려야 필터가 실행된다.  
-사용자가 입력을 마치고 Enter를 누르는 경우, 대기 없이 즉시 결과를 보여주는 것이 자연스럽다.
+#### 제거된 패턴 (참고용)
 
-#### 한글 IME와 Enter 키 충돌 주의
-
-한글 조합 중 Enter를 누르면 브라우저가 **IME 확정(composition confirm)** 용도로 Enter를 사용한다.  
-이 시점에 `onKeyDown`이 발생하므로, `isComposing`이 `true`인 동안은 검색 실행을 막아야 한다.
+아래 패턴은 `debouncedInput`이 변경될 때 `filterQuery`로 동기화하는 `useEffect`를 사용한다.  
+React 공식 문서([You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect))에서 **state를 state로 동기화하는 useEffect는 불필요한 렌더링을 유발하는 anti-pattern**으로 명시되어 있다.
 
 ```
-"사과" 조합 중 Enter 누름
-  → isComposing === true → 검색 실행 안 함 (IME 확정으로 처리)
-  → compositionend 발생 → isComposing === false
-
-이후 Enter를 다시 누름
-  → isComposing === false → 즉시 검색 실행
+렌더 흐름:
+① debouncedInput 변경 → 렌더
+② useEffect 실행 → setFilterQuery → 렌더 (불필요한 추가 렌더)
 ```
 
-#### 구현: `useDebounce`를 우회하는 즉시 실행
+#### 현재 구현
 
-`useDebounce`는 `inputValue`를 300ms 지연해 반환하는 훅이다.  
-Enter 시 즉시 실행하려면 디바운스를 우회해 필터 기준값을 바로 갱신해야 한다.
-
-이를 위해 `Home.jsx`에 `committedQuery` 상태를 추가하고,  
-`useProductFilter`는 `debouncedQuery`와 `committedQuery` 중 **더 최근에 갱신된 값**을 사용한다.
-
-가장 단순한 구현은 별도 `immediateQuery` 상태를 두고, 필터 훅에 넘기는 값을 `immediateQuery || debouncedQuery`로 처리하지 않고, 대신 **단일 `filterQuery` 상태**를 두어 두 경로(디바운스, Enter)가 모두 이 상태를 업데이트하도록 한다.
+`filterQuery` 상태와 `useEffect`를 제거하고 `debouncedInput`을 직접 필터에 전달한다.  
+Enter 즉시 실행 기능은 제거되었으나, 300ms 디바운스 지연이 충분히 빠르므로 UX 영향은 미미하다.
 
 ```js
 // Home.jsx
-const [inputValue, setInputValue] = useState('');   // 입력창 표시용
-const [filterQuery, setFilterQuery] = useState(''); // 실제 필터 기준값
+const [inputValue, setInputValue] = useState('');
 const [isComposing, setIsComposing] = useState(false);
 
 const debouncedInput = useDebounce(inputValue, 300);
 
-// 디바운스가 완료될 때마다 filterQuery 갱신
-useEffect(() => {
-  setFilterQuery(debouncedInput);
-}, [debouncedInput]);
-
-const filtered = useProductFilter(products, activeCategory, filterQuery);
+// debouncedInput을 직접 필터에 전달 — filterQuery 상태 불필요
+const filtered = useProductFilter(products, activeCategory, debouncedInput);
 ```
 
-Enter 시 즉시 `filterQuery`를 갱신:
-
-```jsx
-onKeyDown={(e) => {
-  if (e.key === 'Enter' && !isComposing) {
-    setFilterQuery(inputValue); // 디바운스 대기 없이 즉시 반영
-  }
-}}
-```
-
-동작 흐름 비교:
+동작 흐름:
 
 ```
-일반 입력:
-  inputValue 갱신 → 300ms 후 debouncedInput 갱신 → filterQuery 갱신 → 필터 실행
-
-Enter 입력 (조합 완료 후):
-  inputValue 그대로 → filterQuery 즉시 갱신 → 필터 실행
+inputValue 갱신 → 300ms 후 debouncedInput 갱신 → 필터 실행
 ```
 
 ---
@@ -259,20 +231,12 @@ Enter 입력 (조합 완료 후):
       setIsComposing(false);
       setInputValue(e.target.value);
     }}
-    onKeyDown={(e) => {
-      if (e.key === 'Enter' && !isComposing) {
-        setFilterQuery(inputValue);
-      }
-    }}
     placeholder="상품명으로 검색"
     className="w-full border border-gray-200 rounded-full px-4 py-2 pr-9 text-sm ..."
   />
   {inputValue && (
     <button
-      onClick={() => {
-        setInputValue('');
-        setFilterQuery('');
-      }}
+      onClick={() => setInputValue('')}
       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
       aria-label="검색어 초기화">
       ✕
@@ -281,8 +245,7 @@ Enter 입력 (조합 완료 후):
 </div>
 ```
 
-> X 버튼 클릭 시 `inputValue`와 `filterQuery` 둘 다 초기화해야 한다.  
-> `inputValue`만 지우면 디바운스가 끝나기 전까지 이전 검색 결과가 유지된다.
+> X 버튼은 `inputValue`만 초기화한다. `debouncedInput`은 300ms 후 `''`로 따라오므로 별도 처리가 불필요하다.
 
 ---
 
