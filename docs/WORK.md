@@ -34,6 +34,8 @@
 | 2026-05-15 | 상품 이미지를 이모지 드롭다운으로 대체 | 서버 없는 환경에서 파일 저장 불가, 이모지로 단순하고 직관적으로 처리 |
 | 2026-05-15 | 등록 상품을 `productSlice` + localStorage로 관리 | 새로고침 후에도 등록 상품 유지, 기존 wishlist 영속화 패턴 동일 적용 |
 | 2026-05-15 | 중량 입력을 숫자 + 단위 드롭다운(g/kg)으로 분리 | 자유 텍스트 입력보다 입력 오류 방지, `inputClass`에 width 파라미터 추가로 flex 레이아웃 충돌 해소 |
+| 2026-05-15 | 숫자 필드 유효성에 `z.coerce.number()` 채택 | Zod v4에서 `z.number({ invalid_type_error })` + `z.preprocess` 조합이 커스텀 메시지를 적용하지 않는 문제 확인, `z.coerce.number().min()` 방식으로 통일 |
+| 2026-05-15 | `ProductCard` 이미지 렌더링을 URL/이모지로 분기 | admin 등록 상품의 `image` 필드가 이모지 문자열이므로 `img` 태그 사용 시 로드 실패 후 잘못된 fallback 표시 — `startsWith('/')` 또는 `http` 여부로 분기 |
 
 ---
 

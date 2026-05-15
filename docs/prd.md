@@ -1,9 +1,9 @@
 # PRD — 과일 쇼핑몰 (fruit-shop)
 
-**버전:** 1.3  
+**버전:** 1.4  
 **작성일:** 2026-05-13  
 **최종 수정일:** 2026-05-15  
-**상태:** 관리자 상품 등록 기능 기획 확정
+**상태:** 관리자 상품 수정/삭제 기능 기획 확정
 
 ---
 
@@ -25,6 +25,7 @@
 - 상품 검색 (홈 화면 검색창, 카테고리 배지 연동)
 - 찜하기 (하트 버튼, 찜 목록 페이지, localStorage 영속화)
 - 관리자 상품 등록 (admin 계정 전용, 이모지 선택, localStorage 영속화)
+- 관리자 상품 수정/삭제 (admin 계정 전용, 상품 관리 목록에서 접근)
 - (제외) 실제 결제, 주문 내역
 
 ---
@@ -41,6 +42,8 @@
 | 회원가입 | `/signup` | 이름 + 이메일 + 비밀번호 가입 |
 | 마이페이지 | `/mypage` | 프로필 조회 + 이름 수정 (로그인 필수) |
 | 관리자 상품 등록 | `/admin/product/new` | 상품 등록 폼 (admin 계정 전용) |
+| 관리자 상품 관리 | `/admin/products` | 전체 상품 목록 + 수정/삭제 (admin 계정 전용) |
+| 관리자 상품 수정 | `/admin/product/:id/edit` | 상품 수정 폼 (admin 계정 전용) |
 
 ---
 
@@ -202,6 +205,61 @@
 
 ---
 
+### 3-8. 관리자 상품 관리 목록 (`/admin/products`)
+
+- Header / Footer 포함 (기존 App 레이아웃)
+- `AdminRoute`로 보호: 미로그인 시 `/login`, 일반 계정 접근 시 `/` 리다이렉트
+
+#### 상품 목록 테이블
+
+- 전체 상품을 테이블 형태로 표시한다
+- 컬럼: 이미지(이모지), 상품명(한글/영문), 카테고리, 가격, 재고, 수정 버튼, 삭제 버튼
+- 행 수는 등록된 전체 상품 수와 동일
+
+#### 액션
+
+- **수정 버튼:** 해당 상품의 `/admin/product/:id/edit`으로 이동한다
+- **삭제 버튼:** 클릭 시 확인 다이얼로그(`window.confirm`)를 표시하고, 승인 시 상품을 즉시 삭제한다
+  - localStorage 및 Redux 상태 동기화
+  - 삭제 후 목록이 즉시 갱신된다
+
+#### 상단 액션
+
+- **상품 등록 버튼:** `/admin/product/new`로 이동한다
+- **상품 관리** 링크: Header에서 접근 가능
+
+---
+
+### 3-9. 관리자 상품 수정 페이지 (`/admin/product/:id/edit`)
+
+- Header / Footer 포함 (기존 App 레이아웃)
+- `AdminRoute`로 보호: 미로그인 시 `/login`, 일반 계정 접근 시 `/` 리다이렉트
+- 존재하지 않는 id 접근 시 `/admin/products`로 리다이렉트
+
+#### 폼 필드
+
+등록 폼과 동일한 필드 구성. 기존 상품 데이터로 pre-fill된다.
+
+| 필드 | 입력 방식 | 유효성 |
+|---|---|---|
+| 상품명 (한글) | text | 필수 |
+| 상품명 (영문) | text | 필수 |
+| 가격 | number | 필수, 1 이상 |
+| 설명 | textarea | 필수 |
+| 원산지 | text | 필수 |
+| 중량 | number + select (g / kg) | 필수, 0보다 커야 함 |
+| 재고 | number | 필수, 0 이상 |
+| 이모지 | select (드롭다운) | 필수 |
+| 카테고리 | select | 국내산 / 수입산 |
+
+#### 수정 후 동작
+
+- `productSlice.updateProduct`로 상품 데이터 업데이트
+- localStorage 동기화
+- `/admin/products`로 이동
+
+---
+
 ### 3-6. 회원가입 페이지 (`/signup`)
 
 - Header / Footer 없는 풀페이지 레이아웃 (로그인 페이지와 동일)
@@ -283,6 +341,8 @@
 | 액션 | 설명 |
 |---|---|
 | `addProduct(product)` | 상품 추가, id 자동 부여, localStorage 동기화 |
+| `updateProduct(product)` | id 기준으로 상품 데이터 수정, localStorage 동기화 |
+| `deleteProduct(id)` | id 기준으로 상품 삭제, localStorage 동기화 |
 
 ### wishlistSlice 액션 목록
 
@@ -349,7 +409,9 @@
 ```
 
 ```
-/admin/product/new → AdminProductNew.jsx (AdminRoute, App 레이아웃 포함)
+/admin/product/new        → AdminProductNew.jsx  (AdminRoute, App 레이아웃 포함)
+/admin/products           → AdminProductList.jsx (AdminRoute, App 레이아웃 포함)
+/admin/product/:id/edit   → AdminProductEdit.jsx (AdminRoute, App 레이아웃 포함)
 ```
 
 `createBrowserRouter` 방식 사용. 존재하지 않는 경로는 홈으로 리다이렉트.
@@ -389,12 +451,20 @@
 - [x] 빈 찜 목록 상태에서 안내 UI가 표시된다
 - [x] 새로고침 후에도 찜 목록이 유지된다 (localStorage 영속화)
 - [x] 비로그인 상태에서도 찜 기능이 동작한다
-- [ ] admin 계정으로 로그인 시 Header에 "상품 등록" 메뉴가 표시된다
-- [ ] 일반 계정으로 `/admin/product/new` 접근 시 홈으로 리다이렉트된다
-- [ ] 비로그인 상태로 `/admin/product/new` 접근 시 `/login`으로 리다이렉트된다
-- [ ] 상품 등록 폼에서 필수 항목 미입력 시 인라인 에러가 표시된다
-- [ ] 상품 등록 완료 후 홈으로 이동하고 등록한 상품이 목록에 표시된다
-- [ ] 새로고침 후에도 등록한 상품이 유지된다 (localStorage 영속화)
+- [x] admin 계정으로 로그인 시 Header에 "상품 관리" 메뉴가 표시된다
+- [x] 일반 계정으로 `/admin/product/new` 접근 시 홈으로 리다이렉트된다
+- [x] 비로그인 상태로 `/admin/product/new` 접근 시 `/login`으로 리다이렉트된다
+- [x] 상품 등록 폼에서 필수 항목 미입력 시 인라인 에러가 표시된다
+- [x] 상품 등록 완료 후 상품 관리 목록으로 이동하고 등록한 상품이 목록에 표시된다
+- [x] 새로고침 후에도 등록한 상품이 유지된다 (localStorage 영속화)
+- [x] admin 계정 Header에 "상품 관리" 링크가 표시되고 `/admin/products`로 이동한다
+- [x] 상품 관리 목록에서 전체 상품이 테이블로 표시된다
+- [x] 수정 버튼 클릭 시 해당 상품의 수정 폼으로 이동하고 기존 데이터가 pre-fill된다
+- [x] 수정 완료 후 `/admin/products`로 이동하고 변경 내용이 반영된다
+- [x] 새로고침 후에도 수정 내용이 유지된다 (localStorage 영속화)
+- [x] 삭제 버튼 클릭 시 확인 다이얼로그가 표시된다
+- [x] 삭제 확인 시 상품이 즉시 목록에서 제거된다
+- [x] 새로고침 후에도 삭제된 상품이 복원되지 않는다 (localStorage 영속화)
 
 ---
 

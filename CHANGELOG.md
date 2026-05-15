@@ -8,11 +8,16 @@
 
 ### Added
 
+- 관리자 상품 관리 목록 페이지 (`/admin/products`) — 전체 상품 테이블, 수정/삭제 버튼
+- 관리자 상품 수정 페이지 (`/admin/product/:id/edit`) — 기존 데이터 pre-fill, 수정 완료 후 목록으로 이동
+- `productSlice.updateProduct` / `deleteProduct` 액션 추가 — id 기준 수정·삭제, localStorage 동기화
+- `ProductForm` 공용 컴포넌트 — 등록/수정 폼 로직 공유, `defaultValues` / `submitLabel` props로 분기
+- e2e 테스트 14개 추가 (`e2e/admin-product.spec.js`) — 접근 제어(3), 목록 표시(1), 등록(3), 수정(2), 삭제(2), 영속화(2), 없는 id 리다이렉트(1)
 - 관리자 상품 등록 페이지 (`/admin/product/new`) — admin 계정 전용, `AdminRoute`로 접근 제어
 - `productSlice` — 상품 전역 상태 관리 (`products.json` 초기 데이터 + localStorage 영속화), `addProduct` 액션
 - `AdminRoute` — `isAdmin` 플래그 기반 라우트 가드 (미로그인 → `/login`, 비admin → `/`)
 - admin 계정 추가 (`admin@fruit.com / admin1234`), `isAdmin` 필드, `selectIsAdmin` selector
-- Header에 admin 로그인 시 🛠 상품 등록 링크 표시
+- Header에 admin 로그인 시 🛠 상품 관리 링크 표시 (`/admin/products`)
 - Login 페이지에 관리자 계정 힌트 추가
 - 상품 등록 폼: 이모지 드롭다운(16종), 중량 숫자 + g/kg 단위 드롭다운, react-hook-form + Zod 유효성 검사
 - 찜하기 기능 — 상품 카드/상세 페이지 하트 버튼, 찜 목록 페이지 (`/wishlist`), localStorage 영속화
@@ -40,6 +45,9 @@
 
 ### Fixed
 
+- admin 등록 상품 카드에서 선택한 이모지 대신 다른 이모지가 표시되던 문제 (`ProductCard` 이모지/URL 분기 처리)
+- 존재하지 않는 상품 id로 수정 페이지 접근 시 `/admin/products` 리다이렉트가 동작하지 않던 문제 (`useEffect`로 이전)
+- 상품 등록/수정 폼의 숫자 필드 유효성 에러 메시지가 표시되지 않던 문제 (Zod v4 `z.coerce.number()` 적용)
 - 상품 상세 페이지에서 수량 선택 없이 항상 1개만 장바구니에 담기던 문제
 - 로그인·회원가입 성공 후 페이지가 이동하지 않던 문제
 

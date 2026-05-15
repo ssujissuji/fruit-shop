@@ -149,6 +149,30 @@
 - **주요 변경 파일:** `docs/mypage-spec.md` (신규)
 - 화면 명세, 변경 파일 목록, 상태 관리, 라우팅, 구현 순서 정리
 
+### admin 상품 관리 버그 수정 및 e2e 테스트 추가
+
+- **주요 변경 파일:** `src/components/ui/ProductCard.jsx`, `src/pages/AdminProductEdit.jsx`, `src/schemas/productSchema.js`, `e2e/admin-product.spec.js` (신규)
+- `ProductCard.jsx` 이모지 표시 버그 수정: admin 등록 상품의 `image` 필드가 이모지 문자열일 때 `<img>` 태그로 로드 시도 → `onError` fallback에서 `FRUIT_CONFIG[name]`으로 잘못된 이모지가 표시되던 문제. `product.image`가 `/` 또는 `http`로 시작하면 img 태그, 그 외(이모지)는 div에 직접 렌더링하도록 분기 처리
+- `AdminProductEdit.jsx` 리다이렉트 버그 수정: 존재하지 않는 id 접근 시 render 함수 내에서 `navigate()` 직접 호출 → React 렌더 사이클 경고 및 리다이렉트 미작동. `useEffect`로 이전
+- `productSchema.js` Zod v4 NaN 처리 방식 변경: `z.number({ invalid_type_error })` + `z.preprocess(toNum)` 조합이 Zod v4에서 커스텀 메시지 미적용 문제 → `z.coerce.number()` + `.min()` 에러 메시지 통합 방식으로 교체, `valueAsNumber: true` 옵션 제거
+- `e2e/admin-product.spec.js` 신규: 관리자 상품 관리 e2e 테스트 14개 작성 — 접근 제어(3), 목록 표시(1), 등록(3, 이모지 표시 버그 재현 포함), 수정(2), 삭제(2), 영속화(2), 없는 id 리다이렉트(1)
+
+---
+
+### 관리자 상품 수정/삭제 기능 구현
+
+- **주요 변경 파일:** `src/store/productSlice.js`, `src/components/ui/ProductForm.jsx` (신규), `src/pages/AdminProductNew.jsx`, `src/pages/AdminProductList.jsx` (신규), `src/pages/AdminProductEdit.jsx` (신규), `src/router/index.jsx`, `src/components/layout/Header.jsx`, `docs/PRD.md`
+- `productSlice`에 `updateProduct`(id 기준 수정), `deleteProduct`(id 기준 삭제) 액션 추가 — 각 액션마다 localStorage 동기화
+- `ProductForm.jsx` 신규: 등록/수정 공용 폼 컴포넌트, `defaultValues` / `onSubmit` / `onCancel` / `submitLabel` props로 분기
+- `AdminProductNew.jsx` 리팩토링: 폼 로직을 `ProductForm`으로 위임, 등록 완료 후 `/admin/products`로 이동 변경
+- `AdminProductList.jsx` 신규: 전체 상품 테이블(이모지·상품명·카테고리·가격·재고), 수정 버튼(→ edit 페이지), 삭제 버튼(`window.confirm` 후 즉시 삭제), 상품 등록 버튼
+- `AdminProductEdit.jsx` 신규: 기존 상품 데이터 pre-fill, weight 문자열 파싱(숫자+단위 분리), 수정 완료 후 `/admin/products`로 이동, 없는 id 접근 시 `/admin/products` 리다이렉트
+- `router/index.jsx`에 `/admin/products` → `AdminProductList`, `/admin/product/:id/edit` → `AdminProductEdit` 라우트 추가
+- `Header.jsx`: admin 메뉴 "🛠 상품 등록"(`/admin/product/new`) → "🛠 상품 관리"(`/admin/products`)로 변경, `/admin` 하위 경로 전체 active 처리
+- `PRD.md` v1.4 업데이트: 화면 목록·기능 명세(3-8, 3-9)·productSlice 액션·라우팅·완료 조건 반영
+
+---
+
 ### 관리자 상품 등록 기능 구현
 
 - **주요 변경 파일:** `src/store/authSlice.js`, `src/store/productSlice.js` (신규), `src/store/index.js`, `src/router/AdminRoute.jsx` (신규), `src/router/index.jsx`, `src/pages/AdminProductNew.jsx` (신규), `src/schemas/productSchema.js` (신규), `src/constants/emojis.js` (신규), `src/pages/Home.jsx`, `src/pages/ProductDetail.jsx`, `src/components/layout/Header.jsx`, `src/pages/Login.jsx`, `docs/PRD.md`, `docs/WORK.md`, `docs/admin-product-spec.md` (신규)
