@@ -39,23 +39,21 @@
 | 상태 | 역할 | 위치 |
 |---|---|---|
 | `inputValue` | 입력창에 바인딩되는 즉시 반응 값 | `Home.jsx` `useState` |
-| `debouncedQuery` | 필터에 실제로 사용되는 지연 값 | `useDebounce` 훅 반환값 |
-| `isComposing` | 한글 IME 조합 중 여부 플래그 | `Home.jsx` `useState` |
+| `debouncedInput` | 필터에 실제로 사용되는 지연 값 | `useDebounce` 훅 반환값 |
 
 ```js
 // Home.jsx
 const [activeCategory, setActiveCategory] = useState('전체');
 const [inputValue, setInputValue] = useState('');
-const [isComposing, setIsComposing] = useState(false);
 
-const debouncedQuery = useDebounce(inputValue, 300);
+const debouncedInput = useDebounce(inputValue, 300);
 
-// 필터는 debouncedQuery 기준으로 실행
-const filtered = useProductFilter(products, activeCategory, debouncedQuery);
+// 필터는 debouncedInput 기준으로 실행
+const filtered = useProductFilter(products, activeCategory, debouncedInput);
 ```
 
 > `inputValue`는 입력창 표시용이므로 IME 조합 중에도 즉시 업데이트한다.  
-> 필터 실행에 쓰이는 `debouncedQuery`만 조합 완료 + 디바운스 조건을 모두 충족한 뒤 반영된다.
+> 필터 실행에 쓰이는 `debouncedInput`은 300ms 디바운스 후 반영된다.
 
 ---
 
@@ -145,32 +143,21 @@ export default useProductFilter;
 
 디바운스만으로는 이 문제가 해결되지 않는다. `debouncedQuery`가 300ms 후 `"사과"`로 반영되는 시점에 필터가 두 번 실행되거나, 조합 중 `"삭"` 같은 중간 상태가 `inputValue`를 통해 디바운스에 유입될 수 있다.
 
-#### 해결: `isComposing` 플래그
+#### 해결: `onCompositionEnd`로 최종값 재반영
 
-`onCompositionStart` / `onCompositionEnd`로 조합 중 여부를 추적한다.  
-`inputValue`는 조합 중에도 즉시 반영하되, 조합 완료 시점에 `onCompositionEnd`에서 최종값을 명시적으로 재반영한다.
+> **[2026-05-15 변경]** 초기 구현에서 `isComposing` 플래그(`useState`)와 `onCompositionStart`로 조합 중 여부를 추적했으나,
+> Enter 즉시 실행 기능 제거로 `isComposing`을 읽는 곳이 사라져 미사용 상태가 되었다. 두 핸들러 모두 제거하였다.
+
+`onCompositionEnd`에서 최종 조합값을 `inputValue`에 명시적으로 재반영하는 방식만 유지한다.  
+`useDebounce`가 `inputValue`를 구독하므로, 조합 중 중간 상태도 300ms 타이머가 계속 리셋되어 조합 완료 전까지 `debouncedInput`에 반영되지 않는다.
 
 ```jsx
 <input
   value={inputValue}
-  onChange={(e) => {
-    // 조합 중일 때는 inputValue만 업데이트 (화면 표시용)
-    // debouncedQuery는 isComposing이 false일 때만 inputValue를 따라감
-    setInputValue(e.target.value);
-  }}
-  onCompositionStart={() => setIsComposing(true)}
-  onCompositionEnd={(e) => {
-    setIsComposing(false);
-    setInputValue(e.target.value); // 조합 완료 시점에 최종값 명시 반영
-  }}
+  onChange={(e) => setInputValue(e.target.value)}
+  onCompositionEnd={(e) => setInputValue(e.target.value)}
 />
 ```
-
-`useDebounce`는 `inputValue`를 구독하므로, `isComposing`이 `true`인 동안 `inputValue`가 중간 상태로 바뀌더라도 300ms 타이머가 계속 리셋되어 조합 완료 전까지 `debouncedQuery`에 반영되지 않는다.
-
-> `e.nativeEvent.isComposing`으로 단순화할 수도 있으나,
-> React 합성 이벤트와 네이티브 이벤트의 타이밍 차이로 Chrome에서 불안정할 수 있다.
-> 명시적 플래그 방식이 크로스 브라우저 안전성이 더 높다.
 
 ---
 
