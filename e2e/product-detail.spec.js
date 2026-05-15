@@ -47,4 +47,34 @@ test.describe('상품 상세 페이지', () => {
     await page.getByRole('button', { name: '뒤로가기' }).click()
     await expect(page).toHaveURL('/')
   })
+
+  test('수량 초기값은 1이다', async ({ page }) => {
+    const quantity = page.locator('span.w-10.text-center')
+    await expect(quantity).toHaveText('1')
+  })
+
+  test('수량 + 버튼 클릭 시 수량이 증가한다', async ({ page }) => {
+    const quantity = page.locator('span.w-10.text-center')
+    await page.getByRole('button', { name: '+' }).click()
+    await expect(quantity).toHaveText('2')
+  })
+
+  test('수량 - 버튼은 1 미만으로 감소하지 않는다', async ({ page }) => {
+    const quantity = page.locator('span.w-10.text-center')
+    const decreaseBtn = page.getByRole('button', { name: '−' })
+    await expect(decreaseBtn).toBeDisabled()
+    await expect(quantity).toHaveText('1')
+  })
+
+  test('수량 2개 선택 후 장바구니 담기 시 2개가 담긴다', async ({ page }) => {
+    page.on('dialog', (dialog) => dialog.accept())
+    await page.getByRole('button', { name: '+' }).click()
+    await page.getByRole('button', { name: /장바구니 담기/ }).click()
+
+    await page.locator('a[href="/cart"]').click()
+    await page.waitForURL('/cart')
+
+    const quantity = page.locator('span.w-5.text-center.font-bold.text-sm').first()
+    await expect(quantity).toHaveText('2')
+  })
 })

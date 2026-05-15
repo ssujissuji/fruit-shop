@@ -19,7 +19,7 @@ test.describe('홈 화면', () => {
   })
 
   test('상품 목록 타이틀이 표시된다', async ({ page }) => {
-    await expect(page.getByText('전체 상품')).toBeVisible()
+    await expect(page.getByText('추천 상품')).toBeVisible()
   })
 
   test('상품 카드가 렌더링된다', async ({ page }) => {
