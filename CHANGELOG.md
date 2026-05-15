@@ -36,6 +36,7 @@
 
 ### Changed
 
+- `Home.jsx` 검색 필터 상태 구조 단순화 — `filterQuery` 상태·`useEffect` 동기화 제거 후 `debouncedInput` 직접 사용, `isComposing` 상태·`onCompositionStart` 제거 (한글 IME는 `onCompositionEnd`만으로 유지)
 - Header 사용자 이름을 마이페이지(`/mypage`) 링크로 변경
 - Login·Signup 폼을 react-hook-form + Zod 기반으로 리팩토링
   - `useState(form/touched)` 및 수동 유효성 로직 제거
