@@ -1,14 +1,38 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { login, clearError, selectAuthError } from '../store/authSlice'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { login, clearError, selectAuthError, selectIsLoggedIn } from '../store/authSlice'
+import { loginSchema } from '../schemas/authSchemas'
 
 function Login() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const authError = useSelector(selectAuthError)
+  const isLoggedIn = useSelector(selectIsLoggedIn)
 
-  const [form, setForm] = useState({ email: '', password: '' })
-  const [touched, setTouched] = useState({ email: false, password: false })
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(loginSchema) })
+
+  // register의 onChange를 래핑해서 서버 에러 초기화를 함께 처리
+  const registerField = (name) => {
+    const { onChange, ...rest } = register(name)
+    return {
+      ...rest,
+      onChange: (e) => {
+        onChange(e)
+        if (authError) dispatch(clearError())
+      },
+    }
+  }
+
+  useEffect(() => {
+    if (isLoggedIn) navigate('/', { replace: true })
+  }, [isLoggedIn, navigate])
 
   useEffect(() => {
     return () => {
@@ -16,25 +40,9 @@ function Login() {
     }
   }, [dispatch])
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
-    if (authError) dispatch(clearError())
+  const onSubmit = ({ email, password }) => {
+    dispatch(login({ email, password }))
   }
-
-  const handleBlur = (e) => {
-    setTouched((prev) => ({ ...prev, [e.target.name]: true }))
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    setTouched({ email: true, password: true })
-    if (!form.email || !form.password) return
-    dispatch(login({ email: form.email, password: form.password }))
-  }
-
-  const emailError = touched.email && !form.email ? '이메일을 입력해주세요.' : null
-  const passwordError = touched.password && !form.password ? '비밀번호를 입력해주세요.' : null
 
   return (
     <div className="min-h-screen bg-bg-page flex flex-col">
@@ -82,7 +90,7 @@ function Login() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} noValidate>
+            <form onSubmit={handleSubmit(onSubmit)} noValidate>
               {/* 이메일 */}
               <div className="mb-4">
                 <label className="block text-sm font-semibold font-ui text-text-main mb-1.5">
@@ -90,19 +98,16 @@ function Login() {
                 </label>
                 <input
                   type="email"
-                  name="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                   placeholder="이메일을 입력하세요"
+                  {...registerField('email')}
                   className={`w-full px-4 py-3 rounded-input bg-bg-input text-sm font-body text-text-main placeholder:text-text-disabled outline-none transition-all border ${
-                    emailError
+                    errors.email
                       ? 'border-red-400 focus:border-red-400'
                       : 'border-transparent focus:border-primary'
                   }`}
                 />
-                {emailError && (
-                  <p className="mt-1.5 text-xs text-red-500 font-body">{emailError}</p>
+                {errors.email && (
+                  <p className="mt-1.5 text-xs text-red-500 font-body">{errors.email.message}</p>
                 )}
               </div>
 
@@ -113,19 +118,16 @@ function Login() {
                 </label>
                 <input
                   type="password"
-                  name="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
                   placeholder="비밀번호를 입력하세요"
+                  {...registerField('password')}
                   className={`w-full px-4 py-3 rounded-input bg-bg-input text-sm font-body text-text-main placeholder:text-text-disabled outline-none transition-all border ${
-                    passwordError
+                    errors.password
                       ? 'border-red-400 focus:border-red-400'
                       : 'border-transparent focus:border-primary'
                   }`}
                 />
-                {passwordError && (
-                  <p className="mt-1.5 text-xs text-red-500 font-body">{passwordError}</p>
+                {errors.password && (
+                  <p className="mt-1.5 text-xs text-red-500 font-body">{errors.password.message}</p>
                 )}
               </div>
 

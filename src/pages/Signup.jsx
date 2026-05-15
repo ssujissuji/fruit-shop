@@ -1,16 +1,45 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { signup, clearError, selectAuthError } from '../store/authSlice'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { signup, clearError, selectAuthError, selectIsLoggedIn } from '../store/authSlice'
+import { signupSchema } from '../schemas/authSchemas'
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const fields = [
+  { name: 'name', label: '이름', type: 'text', placeholder: '이름을 입력하세요' },
+  { name: 'email', label: '이메일', type: 'email', placeholder: '이메일을 입력하세요' },
+  { name: 'password', label: '비밀번호', type: 'password', placeholder: '4자 이상 입력하세요' },
+  { name: 'passwordConfirm', label: '비밀번호 확인', type: 'password', placeholder: '비밀번호를 다시 입력하세요' },
+]
 
 function Signup() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const authError = useSelector(selectAuthError)
+  const isLoggedIn = useSelector(selectIsLoggedIn)
 
-  const [form, setForm] = useState({ name: '', email: '', password: '', passwordConfirm: '' })
-  const [touched, setTouched] = useState({ name: false, email: false, password: false, passwordConfirm: false })
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(signupSchema) })
+
+  // register의 onChange를 래핑해서 서버 에러 초기화를 함께 처리
+  const registerField = (name) => {
+    const { onChange, ...rest } = register(name)
+    return {
+      ...rest,
+      onChange: (e) => {
+        onChange(e)
+        if (authError) dispatch(clearError())
+      },
+    }
+  }
+
+  useEffect(() => {
+    if (isLoggedIn) navigate('/', { replace: true })
+  }, [isLoggedIn, navigate])
 
   useEffect(() => {
     return () => {
@@ -18,56 +47,9 @@ function Signup() {
     }
   }, [dispatch])
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
-    if (authError) dispatch(clearError())
+  const onSubmit = ({ name, email, password }) => {
+    dispatch(signup({ name, email, password }))
   }
-
-  const handleBlur = (e) => {
-    setTouched((prev) => ({ ...prev, [e.target.name]: true }))
-  }
-
-  const getFieldError = (field) => {
-    if (!touched[field]) return null
-    if (field === 'name' && !form.name) return '이름을 입력해주세요.'
-    if (field === 'email') {
-      if (!form.email) return '이메일을 입력해주세요.'
-      if (!EMAIL_REGEX.test(form.email)) return '올바른 이메일 형식이 아닙니다.'
-    }
-    if (field === 'password') {
-      if (!form.password) return '비밀번호를 입력해주세요.'
-      if (form.password.length < 4) return '비밀번호는 4자 이상이어야 합니다.'
-    }
-    if (field === 'passwordConfirm') {
-      if (!form.passwordConfirm) return '비밀번호 확인을 입력해주세요.'
-      if (form.password !== form.passwordConfirm) return '비밀번호가 일치하지 않습니다.'
-    }
-    return null
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    setTouched({ name: true, email: true, password: true, passwordConfirm: true })
-
-    const hasError =
-      !form.name ||
-      !form.email ||
-      !EMAIL_REGEX.test(form.email) ||
-      !form.password ||
-      form.password.length < 4 ||
-      form.password !== form.passwordConfirm
-
-    if (hasError) return
-    dispatch(signup({ name: form.name, email: form.email, password: form.password }))
-  }
-
-  const fields = [
-    { name: 'name', label: '이름', type: 'text', placeholder: '이름을 입력하세요' },
-    { name: 'email', label: '이메일', type: 'email', placeholder: '이메일을 입력하세요' },
-    { name: 'password', label: '비밀번호', type: 'password', placeholder: '4자 이상 입력하세요' },
-    { name: 'passwordConfirm', label: '비밀번호 확인', type: 'password', placeholder: '비밀번호를 다시 입력하세요' },
-  ]
 
   return (
     <div className="min-h-screen bg-bg-page flex flex-col">
@@ -115,9 +97,9 @@ function Signup() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} noValidate>
+            <form onSubmit={handleSubmit(onSubmit)} noValidate>
               {fields.map((field, idx) => {
-                const error = getFieldError(field.name)
+                const error = errors[field.name]
                 const isLast = idx === fields.length - 1
                 return (
                   <div key={field.name} className={isLast ? 'mb-6' : 'mb-4'}>
@@ -126,11 +108,8 @@ function Signup() {
                     </label>
                     <input
                       type={field.type}
-                      name={field.name}
-                      value={form[field.name]}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
                       placeholder={field.placeholder}
+                      {...registerField(field.name)}
                       className={`w-full px-4 py-3 rounded-input bg-bg-input text-sm font-body text-text-main placeholder:text-text-disabled outline-none transition-all border ${
                         error
                           ? 'border-red-400 focus:border-red-400'
@@ -138,7 +117,7 @@ function Signup() {
                       }`}
                     />
                     {error && (
-                      <p className="mt-1.5 text-xs text-red-500 font-body">{error}</p>
+                      <p className="mt-1.5 text-xs text-red-500 font-body">{error.message}</p>
                     )}
                   </div>
                 )
