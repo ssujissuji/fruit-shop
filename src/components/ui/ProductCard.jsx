@@ -47,18 +47,29 @@ function ProductCard({ product }) {
       >
         {/* 이미지 영역 */}
         <div className="relative bg-bg-input h-44 flex items-center justify-center overflow-hidden">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
-            onError={(e) => {
-              e.target.style.display = 'none'
-              e.target.nextSibling.style.display = 'flex'
-            }}
-          />
-          <div className="hidden h-full w-full items-center justify-center" style={{ fontSize: '72px' }}>
-            {config.emoji}
-          </div>
+          {product.image.startsWith('/') || product.image.startsWith('http') ? (
+            <>
+              <img
+                src={product.image}
+                alt={product.name}
+                className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                onError={(e) => {
+                  e.target.style.display = 'none'
+                  e.target.nextSibling.style.display = 'flex'
+                }}
+              />
+              <div className="hidden h-full w-full items-center justify-center" style={{ fontSize: '72px' }}>
+                {config.emoji}
+              </div>
+            </>
+          ) : (
+            <div
+              className="h-full w-full flex items-center justify-center group-hover:scale-105 transition-transform duration-300"
+              style={{ fontSize: '72px' }}
+            >
+              {product.image}
+            </div>
+          )}
 
           {/* 카테고리 뱃지 */}
           <span
